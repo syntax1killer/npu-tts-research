@@ -139,3 +139,11 @@ For completeness, the approaches that succeeded are documented elsewhere in the 
 - **IRON MHA** processed 12 attention heads in 1.66ms standalone (3.94ms/pass integrated with data repacking).
 
 The precision problem (BF16 compound error across 12 passes) remains the primary open challenge.
+
+---
+
+## Update: Revisiting INT8 with Proper Calibration
+
+Entry #2 (INT8 quantization) used ONNX Runtime's quantization tools with random token calibration data. We are now revisiting INT8 via **AMD Quark** (the correct tool for XDNA2's power-of-2 scale factor requirement) with **real text calibration data** — 30 diverse sentences tokenized through Kokoro's phoneme tokenizer.
+
+The hypothesis is that INT8's bounded per-layer quantization error may not compound through ALBERT's 12-pass feedback loop the same way BF16's floating-point truncation does. Results will be added here when available.

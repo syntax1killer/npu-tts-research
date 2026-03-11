@@ -204,6 +204,20 @@ If you find this work useful, please cite:
 }
 ```
 
+## Ecosystem & Alternative Approaches
+
+While investigating solutions to the BF16 precision ceiling, we analyzed several community and ecosystem projects claiming to have solved NPU acceleration for Kokoro TTS. Our findings show that the BF16 compounding issue remains fundamentally unsolved on XDNA2, with alternative approaches either sidestepping the problem via integer quantization or relying on standard VitisAI partitioning:
+
+- **INT8 Quantization ([kokoro-npu-quantized](https://huggingface.co/magicunicorn/kokoro-npu-quantized))**: Bypasses the BF16 floating-point compounding error by quantizing to INT8 via VitisAI. With proper text-based calibration (not random tokens), INT8 bounds quantization error per-layer rather than allowing it to compound through the feedback loop. However, benchmarks show only **~1.11x speedup** on XDNA1 hardware (Phoenix, Ryzen 9 8945HS, 16 TOPS) — far below the marketed "13x". The project also targets XDNA1, not the newer XDNA2 architecture.
+
+- **[Lemonade SDK](https://github.com/amd/lemonade) (v9.3.4)**: AMD-backed project with legitimate XDNA2 NPU detection and Kokoro TTS integration. Uses standard VitisAI execution provider under the hood, meaning it likely encounters the same DMA overhead and subgraph fragmentation (36 subgraphs) we documented. Useful as a high-level deployment wrapper, but does not solve the underlying precision or partitioning challenges.
+
+- **Unicorn Execution Engine**: Claims "220x speedups" using custom MLIR-AIE2 kernels, but lacks independent verification or reproducible third-party benchmarks. The repository appears to be primarily a marketing wrapper around existing tooling rather than a novel solution to AIE2P hardware constraints.
+
+**Conclusion**: The bare-metal BF16 compounding error through ALBERT's weight-sharing loop remains a hard hardware limitation for Ryzen AI NPUs. Current ecosystem solutions achieve functional NPU audio primarily by dropping to INT8 quantization, bounding the error per-layer but sacrificing the theoretical throughput advantages of the native BF16 matrix multiplier.
+
+**Update (March 2026)**: We are revisiting INT8 quantization using AMD Quark (the correct tool for XDNA2's power-of-2 scale factors) with proper text-based calibration data. Our earlier INT8 attempt used ORT quantization with random tokens — the wrong tool and wrong data. Results will be added here.
+
 ## Related Work
 
 - [MLIR-AIE](https://github.com/Xilinx/mlir-aie) — AMD's MLIR toolchain for AI Engine devices
@@ -211,7 +225,6 @@ If you find this work useful, please cite:
 - [Bare-metal NPU training (GPT-2)](https://arxiv.org/abs/2504.03083) — Training on AMD NPU via IRON
 - [ALBERT on analog chip (Nature 2025)](https://www.nature.com/articles/s41467-025-63794-4) — ALBERT weight sharing on different hardware
 - [Kokoro TTS](https://huggingface.co/hexgrad/Kokoro-82M) — The model we tested
-- [kokoro-npu-quantized (VitisAI)](https://huggingface.co/magicunicorn/kokoro-npu-quantized) — Alternative NPU approach (VitisAI, different findings)
 
 ## License
 
