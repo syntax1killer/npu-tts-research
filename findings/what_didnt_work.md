@@ -144,6 +144,12 @@ The precision problem (BF16 compound error across 12 passes) remains the primary
 
 ## Update: Revisiting INT8 with Proper Calibration
 
-Entry #2 (INT8 quantization) used ONNX Runtime's quantization tools with random token calibration data. We are now revisiting INT8 via **AMD Quark** (the correct tool for XDNA2's power-of-2 scale factor requirement) with **real text calibration data** — 30 diverse sentences tokenized through Kokoro's phoneme tokenizer.
+Entry #2 (INT8 quantization) used ONNX Runtime's quantization tools with random token calibration data. We revisited INT8 using **AMD Quark 0.11.1** with **real text calibration** — 10 diverse sentences tokenized through Kokoro's phoneme tokenizer with real voice style vectors.
 
-The hypothesis is that INT8's bounded per-layer quantization error may not compound through ALBERT's 12-pass feedback loop the same way BF16's floating-point truncation does. Results will be added here when available.
+**Result: Still fails.** Two configurations tested:
+- **Full INT8** (all nodes): SNR -15.6 dB, correlation 0.001 — audio destroyed
+- **Selective INT8** (ALBERT+predictors kept FP32, only decoder/vocoder quantized): SNR -16.8 dB — also destroyed
+
+**Key finding**: Kokoro is precision-sensitive across the **entire** pipeline. The decoder's AdaIN conditioning and vocoder's HiFi-GAN are just as sensitive as the ALBERT encoder. Keeping ALBERT in FP32 while quantizing the rest made no difference.
+
+**Quark gotchas**: `quant_format="QDQ"` (string) silently fails to match `QuantFormat.QDQ` (enum) in quantizer dispatch. `PowerOfTwoMethod.MinMSE` caches ~3 GB/sample for large models (unusable on consumer hardware). `CalibrationMethod.MinMax` is the only reliable calibration method for models with dynamic output shapes.

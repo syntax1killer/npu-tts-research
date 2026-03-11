@@ -216,7 +216,7 @@ While investigating solutions to the BF16 precision ceiling, we analyzed several
 
 **Conclusion**: The bare-metal BF16 compounding error through ALBERT's weight-sharing loop remains a hard hardware limitation for Ryzen AI NPUs. Current ecosystem solutions achieve functional NPU audio primarily by dropping to INT8 quantization, bounding the error per-layer but sacrificing the theoretical throughput advantages of the native BF16 matrix multiplier.
 
-**Update (March 2026)**: We are revisiting INT8 quantization using AMD Quark (the correct tool for XDNA2's power-of-2 scale factors) with proper text-based calibration data. Our earlier INT8 attempt used ORT quantization with random tokens — the wrong tool and wrong data. Results will be added here.
+**Update (March 2026)**: We revisited INT8 quantization using AMD Quark 0.11.1 with proper text-based calibration (30 sentences tokenized through Kokoro's phoneme tokenizer). Results: **still unusable**. Full INT8 produced SNR -15.6 dB; selective INT8 (ALBERT in FP32, only decoder/vocoder quantized) produced SNR -16.8 dB. Kokoro is precision-sensitive across the *entire* pipeline, not just the iterative ALBERT encoder. The magicunicorn project's claimed results on XDNA1 may use a different quantization strategy or model version.
 
 ## Related Work
 
