@@ -2,7 +2,7 @@
 
 **TL;DR**: We built a complete bare-metal inference pipeline for the [Kokoro TTS](https://huggingface.co/hexgrad/Kokoro-82M) model on AMD's XDNA2 NPU (Ryzen AI, AIE2P architecture) using MLIR-AIE and IRON. Performance was excellent (1.3x faster than CPU), but we discovered a fundamental precision limitation: **BF16 data format truncation compounds through iterative/weight-sharing architectures like ALBERT, producing unusable audio output.** This finding is not documented elsewhere and applies to any BF16-only accelerator running iterative models.
 
-**[Read the paper (PDF)](paper/paper.pdf)** | **[Paper source (LaTeX)](paper/paper.tex)**
+**[Paper source (LaTeX)](paper/paper.tex)** | **[Paper (Markdown)](paper/paper.md)** | Compile with `make paper`
 
 ## Key Findings
 

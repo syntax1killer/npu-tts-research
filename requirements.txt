@@ -2,4 +2,3 @@ numpy
 onnx
 onnxruntime
 matplotlib
-ml_dtypes
