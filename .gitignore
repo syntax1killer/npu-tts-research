@@ -1,9 +1,24 @@
+# Python
 __pycache__/
 *.pyc
 *.pyo
 .ipynb_checkpoints/
-_tmp_*.onnx
 *.egg-info/
 dist/
 build/
 .venv/
+
+# Temp ONNX models
+_tmp_*.onnx
+
+# Large binary files (tensor dumps, audio, models)
+*.wav
+*.bin
+*.onnx
+/models/
+/data/m4_real/
+
+# Build artifacts
+*.xclbin
+*.o
+*.exe

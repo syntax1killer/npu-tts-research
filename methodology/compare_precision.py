@@ -148,9 +148,9 @@ def compare(ref_dir, npu_dir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ref-dir", default=r"C:\Users\synta\npu-tts\bare-metal\kokoro\m4_real",
+    parser.add_argument("--ref-dir", default="./data/m4_real",
                         help="Directory containing FP32 reference outputs (X_pass_N_f32.bin)")
-    parser.add_argument("--npu-dir", default=r"C:\Users\synta\npu-tts\bare-metal\kokoro\m4_real\npu",
+    parser.add_argument("--npu-dir", default="./data/m4_real/npu",
                         help="Directory containing NPU BF16 outputs (X_pass_N.bin)")
     args = parser.parse_args()
     compare(args.ref_dir, args.npu_dir)

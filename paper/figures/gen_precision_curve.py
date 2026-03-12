@@ -11,7 +11,7 @@ from pathlib import Path
 # Path to directory containing per-config subdirectories with BF16 binary outputs
 # Adjust for your environment or set NPU_DATA_DIR env var
 import os
-DATA_DIR = Path(os.environ.get("NPU_DATA_DIR", r"C:\Users\synta\npu-tts\bare-metal\kokoro\m4_real"))
+DATA_DIR = Path(os.environ.get("NPU_DATA_DIR", str(Path(__file__).resolve().parent.parent.parent / "data" / "m4_real")))
 OUT_DIR = Path(__file__).resolve().parent
 SEQ_LEN, DIM = 128, 768
 

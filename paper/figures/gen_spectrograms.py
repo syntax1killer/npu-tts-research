@@ -11,7 +11,7 @@ OUT_DIR = Path(__file__).resolve().parent
 # Path to directory containing audio_ref_fp32.wav and audio_npugemm_cpumha.wav
 # Adjust for your environment or set NPU_DATA_DIR env var
 import os
-DATA_DIR = Path(os.environ.get("NPU_DATA_DIR", r"C:\Users\synta\npu-tts\bare-metal\kokoro\m4_real"))
+DATA_DIR = Path(os.environ.get("NPU_DATA_DIR", str(Path(__file__).resolve().parent.parent.parent / "data" / "m4_real")))
 
 def load_wav(path):
     import wave

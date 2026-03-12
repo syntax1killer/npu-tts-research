@@ -26,7 +26,7 @@ except ImportError:
     sys.exit(1)
 
 # Path to the Kokoro ONNX model — adjust for your environment
-MODEL = os.environ.get("KOKORO_MODEL", r"C:\Users\synta\npu-tts\models\kokoro-static-128-clean.onnx")
+MODEL = os.environ.get("KOKORO_MODEL", "./models/kokoro-static-128-clean.onnx")
 ALBERT_OUTPUT = "/encoder/bert/encoder/albert_layer_groups.0/albert_layers.0/full_layer_layer_norm_11/LayerNormalization_output_0"
 
 
@@ -188,9 +188,9 @@ def compare_audio(ref, npu):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default=None, help="Path to kokoro-static-128-clean.onnx (or set KOKORO_MODEL env var)")
-    parser.add_argument("--npu-dir", default=r"C:\Users\synta\npu-tts\bare-metal\kokoro\m4_real\npu",
+    parser.add_argument("--npu-dir", default="./data/m4_real/npu",
                         help="Directory containing NPU per-pass BF16 outputs")
-    parser.add_argument("--outdir", default=r"C:\Users\synta\npu-tts\bare-metal\kokoro\m4_real",
+    parser.add_argument("--outdir", default="./data/m4_real",
                         help="Output directory for WAV files")
     args = parser.parse_args()
 

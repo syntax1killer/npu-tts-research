@@ -112,6 +112,37 @@ Per-pass timing breakdown (best config: NPU GEMM + AVX2 CPU MHA):
 | **Total per pass** | **19.08** | |
 | **12 passes** | **229** | |
 
+## Reproducing the Results
+
+```bash
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Generate figures with embedded data (no external data needed)
+make figures
+
+# 3. Compile the paper (requires pdflatex)
+make paper
+
+# The following steps require the Kokoro ONNX model and NPU hardware:
+
+# 4. Download the model
+#    Get kokoro-static-128-clean.onnx from https://huggingface.co/hexgrad/Kokoro-82M
+#    Place in ./models/
+
+# 5. Extract ALBERT I/O reference data
+python methodology/extract_albert_io.py --model ./models/kokoro-static-128-clean.onnx
+
+# 6. Run precision comparison (requires NPU output in data/m4_real/npu/)
+python methodology/compare_precision.py
+
+# 7. Generate data-dependent figures
+NPU_DATA_DIR=./data/m4_real python paper/figures/gen_precision_curve.py
+NPU_DATA_DIR=./data/m4_real python paper/figures/gen_spectrograms.py
+```
+
+Four of the six figures use embedded benchmark data and can be generated without any external files. The precision curve and spectrogram figures require the raw per-pass binary dumps from NPU execution (not included due to size).
+
 ## Precision Methodology
 
 Our precision validation pipeline:
@@ -164,6 +195,8 @@ Tools: [`extract_albert_io.py`](methodology/extract_albert_io.py), [`compare_pre
 ├── README.md
 ├── .gitignore
 ├── LICENSE
+├── Makefile                    # make figures / make paper / make clean
+├── requirements.txt            # Python dependencies
 ├── src/                        # ★ Full source code
 │   ├── kernels/                # AIE kernel C++ (runs on NPU tiles)
 │   │   ├── layernorm_kernel.cpp
