@@ -164,18 +164,31 @@ Tools: [`extract_albert_io.py`](methodology/extract_albert_io.py), [`compare_pre
 ├── README.md
 ├── .gitignore
 ├── LICENSE
+├── src/                        # ★ Full source code
+│   ├── kernels/                # AIE kernel C++ (runs on NPU tiles)
+│   │   ├── layernorm_kernel.cpp
+│   │   ├── gelu_kernel.cpp
+│   │   ├── softmax_kernel.cpp
+│   │   ├── conv1d_kernel.cpp   # GEMM using aie::mmul<4,8,8>
+│   │   ├── mha_kernel.cpp
+│   │   └── add_kernel.cpp
+│   ├── designs/                # MLIR-AIE/IRON design scripts (generates xclbin)
+│   │   ├── layernorm_design.py
+│   │   ├── gelu_design.py
+│   │   ├── softmax_design.py
+│   │   ├── mha_3tile_design.py     # 3-tile chained attention pipeline
+│   │   ├── ffn_3tile_design.py     # 3-tile chained FFN pipeline
+│   │   └── conv1d_gemm_design.py   # 4-tile parallel GEMM
+│   └── host/                   # Windows host code (XRT benchmarks)
+│       ├── benchmark_iron_gemm.cpp # IRON GEMM latency/GFLOPS measurement
+│       └── albert_bench.cpp        # Full ALBERT pass (hybrid CPU/NPU)
 ├── paper/
 │   ├── paper.tex              # Full paper (LaTeX, arXiv-ready)
 │   ├── paper.md               # Paper source (Markdown)
 │   ├── outline.md             # Paper outline
 │   └── figures/
-│       ├── fig1_architecture.{png,pdf}
-│       ├── fig2_timing_breakdown.{png,pdf}
-│       ├── fig3_precision_curve.{png,pdf}
-│       ├── fig4_error_waterfall.{png,pdf}
-│       ├── fig5_spectrograms.{png,pdf}
-│       ├── fig6_optimization_trajectory.{png,pdf}
-│       └── gen_*.py            # Figure generation scripts
+│       ├── fig{1-6}_*.{png,pdf}   # Generated figures
+│       └── gen_*.py               # Figure generation scripts
 ├── findings/
 │   ├── precision_analysis.md   # Detailed M4 precision investigation
 │   ├── performance.md          # IRON GEMM benchmarks, ALBERT timing
