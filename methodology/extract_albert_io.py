@@ -28,7 +28,8 @@ except ImportError:
     print("pip install onnx")
     sys.exit(1)
 
-MODEL = r"C:\Users\synta\npu-tts\models\kokoro-static-128-clean.onnx"
+# Path to the Kokoro ONNX model — adjust for your environment
+MODEL = os.environ.get("KOKORO_MODEL", r"C:\Users\synta\npu-tts\models\kokoro-static-128-clean.onnx")
 
 # Tensor names from graph inspection
 ALBERT_INPUT = "/encoder/bert/encoder/embedding_hidden_mapping_in/Add_output_0"
@@ -190,6 +191,11 @@ def extract(outdir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--outdir", default=r"C:\Users\synta\npu-tts\bare-metal\kokoro\m4_real")
+    parser.add_argument("--model", default=None, help="Path to kokoro-static-128-clean.onnx (or set KOKORO_MODEL env var)")
+    parser.add_argument("--outdir", default=r"C:\Users\synta\npu-tts\bare-metal\kokoro\m4_real",
+                        help="Output directory for extracted tensors")
     args = parser.parse_args()
+    global MODEL
+    if args.model:
+        MODEL = args.model
     extract(args.outdir)
